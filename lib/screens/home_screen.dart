@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/child_profile.dart';
-// import '../services/screen_time_service.dart'; // ← i-uncomment kasabay ng lock mechanism
+import '../services/screen_time_service.dart';
 import '../widgets/kcc_widgets.dart';
 import 'profile_screen.dart';
 
@@ -15,58 +15,72 @@ class HomeScreen extends StatefulWidget {
   @override State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with WidgetsBindingObserver {
   Timer? _timer;
   int  _remaining = 0;
   bool _locked = false, _loaded = false;
   int  _navIdx = 0; // 0=Tahanan, 1=Aktibidad, 2=Profil
 
-  @override void initState() { super.initState(); _init(); }
+  // Shorthand — falls back to 0 if profile has no id yet (shouldn't happen)
+  int get _profileId => widget.profile.id ?? 0;
 
-  Future<void> _init() async {
-    // ─────────────────────────────────────────────────────────────────────────
-    // LOCK MECHANISM — COMMENTED OUT FOR TESTING
-    //
-    // Age-based screen time limits (from ChildProfile.screenTimeLimitMinutes):
-    //   Age 2        → 15 minutes per day
-    //   Age 3+       → 40 minutes per day
-    //
-    // To re-enable the lock when done testing:
-    //   1. Delete the "TEST MODE" block below
-    //   2. Uncomment everything inside this /* ... */ block
-    //
-    /*
-    final r = await ScreenTimeService.remainingSeconds(
-        widget.profile.screenTimeLimitMinutes);
-    if (!mounted) return;
-    setState(() { _remaining = r; _locked = r <= 0; _loaded = true; });
-    if (!_locked) {
-      _timer = Timer.periodic(const Duration(seconds: 1), (_) async {
-        await ScreenTimeService.addOneSecond();
-        if (!mounted) return;
-        setState(() {
-          if (_remaining > 0) _remaining--;
-          if (_remaining <= 0) { _locked = true; _timer?.cancel(); }
-        });
-      });
-    }
-    */
-    // ─────────────────────────────────────────────────────────────────────────
-
-    // ── TEST MODE: timer runs freely, app never locks ─────────────────────
-    // Nagpapakita ng countdown mula sa age-based limit pero hindi naglo-lock.
-    // Palitan ito ng block sa itaas kapag tapos ka na sa testing.
-    final limitSeconds = widget.profile.screenTimeLimitMinutes * 60;
-    if (!mounted) return;
-    setState(() { _remaining = limitSeconds; _loaded = true; });
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      setState(() { if (_remaining > 0) _remaining--; });
-    });
-    // ─────────────────────────────────────────────────────────────────────────
+  @override void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _init();
   }
 
-  @override void dispose() { _timer?.cancel(); super.dispose(); }
+  Future<void> _init() async {
+    final r = await ScreenTimeService.remainingSeconds(
+        _profileId, widget.profile.screenTimeLimitMinutes);
+    if (!mounted) return;
+    setState(() { _remaining = r; _loaded = true; });
+    // ── LOCK MECHANISM — COMMENTED OUT FOR TESTING
+    // Kapag tapos ka na sa testing, alisin ang comment sa dalawang linya:
+    // setState(() { _remaining = r; _locked = r <= 0; _loaded = true; });
+    // if (_locked) return; // huwag simulan ang timer kung lock na
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) async {
+      await ScreenTimeService.addOneSecond(_profileId);
+      if (!mounted) return;
+      setState(() {
+        if (_remaining > 0) _remaining--;
+        // ── LOCK MECHANISM — COMMENTED OUT FOR TESTING
+        // Kapag tapos ka na sa testing, alisin ang comment sa dalawang linya:
+        // if (_remaining <= 0) { _locked = true; _timer?.cancel(); }
+      });
+    });
+  }
+
+  void _pauseTimer() { _timer?.cancel(); _timer = null; }
+
+  /// Called automatically by WidgetsBindingObserver when the app goes
+  /// background/foreground. This is how pause/resume works — no extra code needed.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App came back to foreground — re-read saved usage and resume timer
+      _init();
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.inactive ||
+               state == AppLifecycleState.detached) {
+      // App going to background or closed — stop the timer
+      // ScreenTimeService already saved every second, so no data is lost
+      _pauseTimer();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
+    super.dispose();
+  }
 
   String _fmt(int s) =>
       '${(s~/60).toString().padLeft(2,'0')}:${(s%60).toString().padLeft(2,'0')}';
@@ -147,7 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         // ── LOCK OVERLAY — COMMENTED OUT FOR TESTING ──────────────────────
-        // Kapag tapos ka na sa testing, alisin ang comment sa line sa ibaba:
+        // Kapag tapos ka na sa testing, alisin ang comment sa line sa ibaba
+        // at sa dalawang linya sa loob ng _init() / _startTimer():
         // if (_locked) _LockOverlay(fmt: _fmt),
         // ─────────────────────────────────────────────────────────────────
       ]),

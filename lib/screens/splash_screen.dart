@@ -18,6 +18,7 @@ import '../models/child_profile.dart';
 import '../services/profile_service.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
+import 'profile_selector_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -107,17 +108,38 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _route() async {
     await Future.delayed(const Duration(milliseconds: 2800));
     if (!mounted) return;
-    final ChildProfile? profile = await ProfileService.loadProfile();
+
+    final loggedIn  = await ProfileService.isLoggedIn();
+    final hasProfiles = await ProfileService.hasAnyProfile();
     if (!mounted) return;
+
+    Widget destination;
+    if (loggedIn) {
+      // Active session — load that profile and go home
+      final profile = await ProfileService.loadActiveProfile();
+      if (!mounted) return;
+      if (profile != null) {
+        destination = HomeScreen(profile: profile);
+      } else {
+        // Edge case: session id points to a deleted profile
+        await ProfileService.logout();
+        destination = hasProfiles
+            ? const ProfileSelectorScreen()
+            : const OnboardingScreen();
+      }
+    } else if (hasProfiles) {
+      // Logged out but profiles exist → show selector
+      destination = const ProfileSelectorScreen();
+    } else {
+      // First launch — no profiles yet
+      destination = const OnboardingScreen();
+    }
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, animation, __) => FadeTransition(
-          opacity: animation,
-          child: profile == null
-              ? const OnboardingScreen()
-              : HomeScreen(profile: profile),
-        ),
+        pageBuilder: (_, animation, __) =>
+            FadeTransition(opacity: animation, child: destination),
       ),
     );
   }

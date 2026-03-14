@@ -5,10 +5,12 @@
 
 import 'package:flutter/material.dart';
 import '../models/child_profile.dart';
+import '../models/progress_model.dart';
 import '../services/screen_time_service.dart';
 import '../services/profile_service.dart';
+import '../services/progress_service.dart';
 import '../widgets/kcc_widgets.dart';
-import 'onboarding_screen.dart';
+import 'profile_selector_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ChildProfile profile;
@@ -22,12 +24,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   int  _usedSeconds = 0;
   bool _loaded      = false;
 
-  // Placeholder na progreso — palitan ng tunay na SQLite data
-  static const int _starsEarned    = 3;
-  static const int _totalStars     = 10;
-  static const int _levelsFinished = 1;
-  static const int _totalLevels    = 10;
-  static const int _activitiesDone = 5;
+  // Real progress from SQLite
+  ProgressSummary _summary = const ProgressSummary(
+    totalStars: 0, totalActivitiesDone: 0,
+    levelsUnlocked: 1, bestScorePerActivity: {},
+  );
 
   late AnimationController _ringCtrl;
   late Animation<double>   _ringAnim;
@@ -42,9 +43,10 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Future<void> _loadData() async {
-    final used = await ScreenTimeService.getUsedSecondsToday();
+    final used    = await ScreenTimeService.getUsedSecondsToday(widget.profile.id ?? 0);
+    final summary = await ProgressService.getSummary(widget.profile.id ?? 0);
     if (!mounted) return;
-    setState(() { _usedSeconds=used; _loaded=true; });
+    setState(() { _usedSeconds = used; _summary = summary; _loaded = true; });
     _ringCtrl.forward();
   }
 
@@ -61,10 +63,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             Container(
               width: 72, height: 72,
               decoration: BoxDecoration(
-                color: KCCColors.coral.withOpacity(0.12),
+                color: KCCColors.blue.withOpacity(0.10),
                 shape: BoxShape.circle,
               ),
-              child: Center(child: KCCPersonIcon(size: 36, color: KCCColors.coral)),
+              child: const Icon(Icons.logout_rounded,
+                  size: 36, color: KCCColors.blue),
             ),
             const SizedBox(height: 16),
             const Text('Mag-sign out?',
@@ -72,9 +75,26 @@ class _ProfileScreenState extends State<ProfileScreen>
                     color: KCCColors.darkNavy)),
             const SizedBox(height: 8),
             const Text(
-              'Mabubura ang profile ng bata at kailangan muling mag-setup.',
+              'Mase-save ang lahat ng iyong progreso at mga bituin. '
+              'Maaari kang bumalik anumang oras.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: KCCColors.textMuted, height: 1.5),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: KCCColors.green.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(Icons.check_circle_outline,
+                    size: 16, color: KCCColors.green),
+                const SizedBox(width: 6),
+                Text('Hindi mabubura ang data',
+                    style: TextStyle(fontSize: 12,
+                        fontWeight: FontWeight.w700, color: KCCColors.green)),
+              ]),
             ),
             const SizedBox(height: 24),
             Row(children: [
@@ -83,11 +103,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                   onPressed: () => Navigator.pop(context, false),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: KCCColors.textMuted),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text('Hindi',
-                      style: TextStyle(color: KCCColors.textMuted, fontWeight: FontWeight.w700)),
+                      style: TextStyle(color: KCCColors.textMuted,
+                          fontWeight: FontWeight.w700)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -95,13 +117,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KCCColors.coral,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor: KCCColors.blue,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                   ),
                   child: const Text('Oo, sign out',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                      style: TextStyle(color: Colors.white,
+                          fontWeight: FontWeight.w700)),
                 ),
               ),
             ]),
@@ -110,15 +134,24 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
     );
     if (confirm != true || !mounted) return;
-    await ProfileService.clearProfile();
+    await ProfileService.logout();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, a, __) =>
-            FadeTransition(opacity: a, child: const OnboardingScreen()),
+        pageBuilder: (_, a, __) => FadeTransition(
+            opacity: a, child: const ProfileSelectorScreen()),
       ),
       (_) => false,
+    );
+  }
+
+  Future<void> _switchProfile() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ProfileSelectorScreen(fromInsideApp: true),
+      ),
     );
   }
 
@@ -134,10 +167,18 @@ class _ProfileScreenState extends State<ProfileScreen>
         child:CircularProgressIndicator(color:KCCColors.blue));
 
     final limitSec   = widget.profile.screenTimeLimitMinutes * 60;
-    final usageRatio = limitSec>0
-        ? (_usedSeconds/limitSec).clamp(0.0,1.0) : 0.0;
-    final levelRatio = _levelsFinished/_totalLevels;
-    final starRatio  = _starsEarned/_totalStars;
+    final usageRatio = limitSec > 0
+        ? (_usedSeconds / limitSec).clamp(0.0, 1.0) : 0.0;
+
+    final starsEarned    = _summary.totalStars;
+    final totalStars     = 10;
+    final levelsFinished = _summary.levelsUnlocked;
+    final totalLevels    = ProgressSummary.totalLevels;
+    final activitiesDone = _summary.totalActivitiesDone;
+
+    final levelRatio = levelsFinished / totalLevels;
+    final starRatio  = totalStars > 0
+        ? (starsEarned / totalStars).clamp(0.0, 1.0) : 0.0;
 
     return SingleChildScrollView(
       padding:const EdgeInsets.fromLTRB(20,20,20,32),
@@ -202,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             anim:_ringAnim, progress:levelRatio,
             fillColor:KCCColors.teal,
             label:'Mga Antas\nNatapos',
-            value:'$_levelsFinished/$_totalLevels',
+            value:'$levelsFinished/$totalLevels',
             icon:KCCBookIcon(size:18,color:KCCColors.teal),
           )),
           const SizedBox(width:12),
@@ -210,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             anim:_ringAnim, progress:starRatio,
             fillColor:KCCColors.yellow,
             label:'Mga Bituin\nNatanggap',
-            value:'$_starsEarned/$_totalStars',
+            value:'$starsEarned/$totalStars',
             icon:KCCStarIcon(size:18,color:KCCColors.yellow),
           )),
         ]),
@@ -260,15 +301,14 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         KCCCard(child:Column(children:[
           Row(mainAxisAlignment:MainAxisAlignment.center,
-              children:List.generate(_totalStars,(i)=>Padding(
+              children:List.generate(totalStars,(i)=>Padding(
             padding:const EdgeInsets.symmetric(horizontal:3),
             child:KCCStarIcon(
               size:26,
-              color:i<_starsEarned?KCCColors.yellow
-                  :KCCColors.bgLight),
+              color:i<starsEarned?KCCColors.yellow:KCCColors.bgLight),
           ))),
           const SizedBox(height:14),
-          Text('$_starsEarned sa $_totalStars na bituin ang nakuha mo!',
+          Text('$starsEarned sa $totalStars na bituin ang nakuha mo!',
               textAlign:TextAlign.center,
               style:const TextStyle(fontSize:14,fontWeight:FontWeight.w700,
                   color:KCCColors.darkNavy)),
@@ -290,15 +330,15 @@ class _ProfileScreenState extends State<ProfileScreen>
         KCCCard(child:Column(children:[
           _StatRow(icon:KCCBookIcon(size:18,color:KCCColors.teal),
               label:'Mga Antas na Natapos',
-              value:'$_levelsFinished antas', color:KCCColors.teal),
+              value:'$levelsFinished antas', color:KCCColors.teal),
           const Divider(height:20,color:Color(0xFFEEEEEE)),
           _StatRow(icon:KCCStarIcon(size:18,color:KCCColors.yellow),
               label:'Kabuuang Bituin',
-              value:'$_starsEarned bituin', color:KCCColors.yellow),
+              value:'$starsEarned bituin', color:KCCColors.yellow),
           const Divider(height:20,color:Color(0xFFEEEEEE)),
           _StatRow(icon:KCCChartIcon(size:18,color:KCCColors.blue),
               label:'Mga Aktibidad na Ginawa',
-              value:'$_activitiesDone gawain', color:KCCColors.blue),
+              value:'$activitiesDone gawain', color:KCCColors.blue),
           const Divider(height:20,color:Color(0xFFEEEEEE)),
           _StatRow(icon:KCCClockIcon(size:18,color:KCCColors.coral),
               label:'Oras na Nagamit Ngayon',
@@ -338,6 +378,38 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         const SizedBox(height:20),
 
+        // ── Switch Profile button ────────────────────────────────────────
+        GestureDetector(
+          onTap: _switchProfile,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: KCCColors.blue.withOpacity(0.07),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                  color: KCCColors.blue.withOpacity(0.25), width: 1.5),
+            ),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                width: 32, height: 32,
+                decoration: BoxDecoration(
+                  color: KCCColors.blue.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.switch_account_rounded,
+                    size: 18, color: KCCColors.blue),
+              ),
+              const SizedBox(width: 12),
+              const Text('Lumipat ng Profile',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800,
+                      color: KCCColors.blue)),
+            ]),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
         // ── Sign-out button ──────────────────────────────────────────────
         GestureDetector(
           onTap: _signOut,
@@ -367,7 +439,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         const SizedBox(height: 8),
         const Center(
-          child: Text('Mabubura ang profile kapag nag-sign out.',
+          child: Text('Mase-save ang lahat ng progreso mo.',
               style: TextStyle(fontSize: 11, color: KCCColors.textMuted)),
         ),
 

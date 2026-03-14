@@ -10,7 +10,9 @@ import '../services/profile_service.dart';
 import 'home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  /// true = adding a 2nd/3rd profile (skips welcome screen).
+  final bool addingProfile;
+  const OnboardingScreen({super.key, this.addingProfile = false});
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
@@ -18,8 +20,8 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen>
     with TickerProviderStateMixin {
 
-  final _page     = PageController();
-  int   _cur      = 0; // 0=maligayang pagdating, 1=pangalan, 2=edad, 3=buod
+  late PageController _page;
+  int   _cur      = 0;
 
   final _nameCtrl = TextEditingController();
   final _ageCtrl  = TextEditingController();
@@ -30,9 +32,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late AnimationController _fadeCtrl;
   late Animation<double>   _fade;
 
+  // Pages: 0=welcome(skip if addingProfile), 1=pangalan, 2=edad, 3=buod
+  // If addingProfile, we start at page index 1.
+  int get _startPage => widget.addingProfile ? 1 : 0;
+  int get _totalPages => widget.addingProfile ? 3 : 4; // welcome+name+age+summary or name+age+summary
+
   @override
   void initState() {
     super.initState();
+    _cur  = _startPage;
+    _page = PageController(initialPage: _startPage);
     _fadeCtrl = AnimationController(
         vsync:this, duration:const Duration(milliseconds:450));
     _fade = CurvedAnimation(parent:_fadeCtrl, curve:Curves.easeOut);
@@ -46,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     super.dispose();
   }
 
-  // ─── Navigation ─────────────────────────────────────────────────────────────
+  // ─── Navigation ──────────────────────────────────────────────────────────
   void _next() {
     if (_cur == 1 && !_checkName()) return;
     if (_cur == 2 && !_checkAge())  return;
@@ -60,16 +69,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _back() {
-    if (_cur > 0) {
+    if (_cur > _startPage) {
       _fadeCtrl.reset();
       _page.previousPage(
           duration:const Duration(milliseconds:380), curve:Curves.easeInOut);
       setState(() => _cur--);
       _fadeCtrl.forward();
+    } else if (widget.addingProfile) {
+      Navigator.of(context).pop();
     }
   }
 
-  // ─── Validation ─────────────────────────────────────────────────────────────
+  // ─── Validation ──────────────────────────────────────────────────────────
   bool _checkName() {
     final n = _nameCtrl.text.trim();
     if (n.isEmpty) {
@@ -101,25 +112,29 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   Future<void> _save() async {
     if (!_checkName() || !_checkAge()) return;
-    final p = ChildProfile(
+    final profile = ChildProfile(
       name: _nameCtrl.text.trim(),
       age:  int.parse(_ageCtrl.text.trim()),
     );
-    await ProfileService.saveProfile(p);
+    final saved = await ProfileService.saveProfile(profile);
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds:500),
-      pageBuilder: (_,a,_) =>
-          FadeTransition(opacity:a, child:HomeScreen(profile:p)),
-    ));
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (_, a, __) =>
+            FadeTransition(opacity: a, child: HomeScreen(profile: saved)),
+      ),
+      (_) => false,
+    );
   }
 
   // ─── Build ───────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) => WillPopScope(
     onWillPop: () async {
-      if (_cur > 0) { _back(); return false; }
-      return false; // hindi makakaalis sa onboarding
+      if (_cur > _startPage) { _back(); return false; }
+      if (widget.addingProfile) { Navigator.of(context).pop(); return false; }
+      return false;
     },
     child: Scaffold(
       body: KCCBackground(
@@ -134,8 +149,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 children: [_welcome(), _namePage(), _agePage(), _summary()],
               ),
             ),
-            // Back button — lahat ng pahina maliban sa welcome (pahina 0)
-            if (_cur > 0)
+            // Back button — lahat ng pahina maliban sa welcome (pahina 0), o laging ipakita kung addingProfile
+            if (_cur > _startPage || widget.addingProfile)
               Positioned(
                 top:12, left:16,
                 child: KCCBackButton(onPressed:_back),

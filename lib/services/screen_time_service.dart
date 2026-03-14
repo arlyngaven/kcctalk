@@ -1,57 +1,84 @@
 // lib/services/screen_time_service.dart
 //
-// Tracks how many seconds the child has used the app today.
+// Tracks how many seconds each child has used the app today.
+// Per-profile: each child's screen time is stored separately.
 // Resets automatically when the calendar date changes.
 //
-// Dependencies (add to pubspec.yaml):
+// KEY FORMAT:
+//   usage_seconds_<profileId>   — seconds used today by this profile
+//   last_date_<profileId>       — last recorded date for this profile
+//
+// HOW PAUSE/RESUME WORKS:
+//   - The timer in HomeScreen calls addOneSecond() every second
+//     ONLY while the app is in the foreground (AppLifecycleState.resumed).
+//   - When the app is backgrounded/closed, the timer is paused automatically
+//     via the WidgetsBindingObserver in HomeScreen.
+//   - On next open, getUsedSecondsToday() returns the saved value — the
+//     countdown continues from exactly where it left off.
+//   - At midnight, _maybeResetForNewDay() zeroes out the counter.
+//
+// Dependencies:
 //   shared_preferences: ^2.2.2
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenTimeService {
-  static const _keyUsageSeconds = 'usage_seconds';
-  static const _keyLastDate = 'last_date';
+  /// Returns the shared_preferences key for this profile's usage.
+  static String _keyUsage(int profileId) => 'usage_seconds_$profileId';
+  static String _keyDate(int profileId)  => 'last_date_$profileId';
 
-  /// Returns how many seconds have been used today.
-  static Future<int> getUsedSecondsToday() async {
+  /// How many seconds this profile has used the app today.
+  static Future<int> getUsedSecondsToday(int profileId) async {
     final prefs = await SharedPreferences.getInstance();
-    _maybeResetForNewDay(prefs);
-    return prefs.getInt(_keyUsageSeconds) ?? 0;
+    await _maybeResetForNewDay(prefs, profileId);
+    return prefs.getInt(_keyUsage(profileId)) ?? 0;
   }
 
   /// Call this every second while the app is in the foreground.
-  static Future<void> addOneSecond() async {
+  /// Only called when AppLifecycleState.resumed — so closing/backgrounding
+  /// the app automatically pauses the count.
+  static Future<void> addOneSecond(int profileId) async {
     final prefs = await SharedPreferences.getInstance();
-    _maybeResetForNewDay(prefs);
-    final current = prefs.getInt(_keyUsageSeconds) ?? 0;
-    await prefs.setInt(_keyUsageSeconds, current + 1);
+    await _maybeResetForNewDay(prefs, profileId);
+    final current = prefs.getInt(_keyUsage(profileId)) ?? 0;
+    await prefs.setInt(_keyUsage(profileId), current + 1);
   }
 
-  /// Returns true if the child has exceeded their daily limit.
-  static Future<bool> isLimitReached(int limitMinutes) async {
-    final used = await getUsedSecondsToday();
+  /// Remaining seconds for this profile today. Never below 0.
+  static Future<int> remainingSeconds(int profileId, int limitMinutes) async {
+    final used  = await getUsedSecondsToday(profileId);
+    final total = limitMinutes * 60;
+    final rem   = total - used;
+    return rem < 0 ? 0 : rem;
+  }
+
+  /// Returns true if this profile has hit their daily limit.
+  static Future<bool> isLimitReached(int profileId, int limitMinutes) async {
+    final used = await getUsedSecondsToday(profileId);
     return used >= limitMinutes * 60;
   }
 
-  /// Remaining seconds today. Never goes below 0.
-  static Future<int> remainingSeconds(int limitMinutes) async {
-    final used = await getUsedSecondsToday();
-    final total = limitMinutes * 60;
-    final remaining = total - used;
-    return remaining < 0 ? 0 : remaining;
+  /// Clear today's usage for this profile (e.g. for testing / manual reset).
+  static Future<void> resetToday(int profileId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyUsage(profileId), 0);
   }
 
-  static void _maybeResetForNewDay(SharedPreferences prefs) {
-    final today = _todayString();
-    final lastDate = prefs.getString(_keyLastDate);
+  // ─── Private ──────────────────────────────────────────────────────────────
+
+  static Future<void> _maybeResetForNewDay(
+      SharedPreferences prefs, int profileId) async {
+    final today    = _todayString();
+    final lastDate = prefs.getString(_keyDate(profileId));
     if (lastDate != today) {
-      prefs.setInt(_keyUsageSeconds, 0);
-      prefs.setString(_keyLastDate, today);
+      await prefs.setInt(_keyUsage(profileId), 0);
+      await prefs.setString(_keyDate(profileId), today);
     }
   }
 
   static String _todayString() {
     final now = DateTime.now();
-    return '${now.year}-${now.month}-${now.day}';
+    return '${now.year}-${now.month.toString().padLeft(2,'0')}-'
+           '${now.day.toString().padLeft(2,'0')}';
   }
 }
