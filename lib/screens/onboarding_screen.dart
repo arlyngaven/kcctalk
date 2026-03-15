@@ -35,7 +35,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // Pages: 0=welcome(skip if addingProfile), 1=pangalan, 2=edad, 3=buod
   // If addingProfile, we start at page index 1.
   int get _startPage => widget.addingProfile ? 1 : 0;
-  int get _totalPages => widget.addingProfile ? 3 : 4; // welcome+name+age+summary or name+age+summary
 
   @override
   void initState() {
@@ -130,11 +129,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   // ─── Build ───────────────────────────────────────────────────────────────────
   @override
-  Widget build(BuildContext context) => WillPopScope(
-    onWillPop: () async {
-      if (_cur > _startPage) { _back(); return false; }
-      if (widget.addingProfile) { Navigator.of(context).pop(); return false; }
-      return false;
+  Widget build(BuildContext context) => PopScope(
+    onPopInvoked: (didPop) {
+      if (_cur > _startPage) { _back(); }
+      else if (widget.addingProfile) { Navigator.of(context).pop(); }
     },
     child: Scaffold(
       body: KCCBackground(
@@ -175,9 +173,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       Container(
         padding:const EdgeInsets.symmetric(horizontal:14,vertical:6),
         decoration:BoxDecoration(
-          color:Colors.white.withOpacity(0.15),
+          color:Colors.white.withAlpha((255*(0.15)).round()),
           borderRadius:BorderRadius.circular(20),
-          border:Border.all(color:Colors.white.withOpacity(0.30))),
+          border:Border.all(color:Colors.white.withAlpha((255*(0.30)).round()))),
         child:const Text('Tulong sa Pagsasalita para sa mga Bata',
             style:TextStyle(color:Colors.white,fontSize:13,
                 fontWeight:FontWeight.w500)),
@@ -305,7 +303,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         Text(
           'Awtomatikong mag-lock ang app pagkatapos ng limitang oras bawat araw.',
           textAlign:TextAlign.center,
-          style:TextStyle(color:Colors.white.withOpacity(0.65),
+          style:TextStyle(color:Colors.white.withAlpha((255*(0.65)).round()),
               fontSize:13,height:1.5)),
         const SizedBox(height:22),
         KCCButton(label:'Simulan ang App', onPressed:_save),
@@ -331,7 +329,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return word.split('').asMap().entries.map((e) => Text(e.value,
         style:TextStyle(fontSize:size, fontWeight:FontWeight.w900,
           color:colors[e.key % colors.length],
-          shadows:[Shadow(color:Colors.black.withOpacity(0.20),
+          shadows:[Shadow(color:Colors.black.withAlpha((255*(0.20)).round()),
               offset:const Offset(2,3))]))).toList();
   }
 }
@@ -342,9 +340,9 @@ class _TimeLimitHint extends StatelessWidget {
   @override Widget build(BuildContext context) => Container(
     padding:const EdgeInsets.symmetric(horizontal:16,vertical:12),
     decoration:BoxDecoration(
-      color:KCCColors.yellow.withOpacity(0.18),
+      color:KCCColors.yellow.withAlpha((255*(0.18)).round()),
       borderRadius:BorderRadius.circular(12),
-      border:Border.all(color:KCCColors.yellow.withOpacity(0.50),width:1.5)),
+      border:Border.all(color:KCCColors.yellow.withAlpha((255*(0.50)).round()),width:1.5)),
     child:Row(children:[
       KCCClockIcon(size:22,color:KCCColors.yellow),
       const SizedBox(width:12),
@@ -364,7 +362,7 @@ class _MascotP extends CustomPainter {
       bottomLeft:const Radius.circular(28),bottomRight:const Radius.circular(28)),
       Paint()..color=const Color(0xFF7EC8E3));
     canvas.drawOval(Rect.fromCenter(center:Offset(cx,cy+14),width:36,height:42),
-        Paint()..color=Colors.white.withOpacity(0.28));
+        Paint()..color=Colors.white.withAlpha((255*(0.28)).round()));
     canvas.drawCircle(Offset(cx,cy-20),30,Paint()..color=const Color(0xFF93D8EE));
     for(final dx in [-23.0,23.0]){
       canvas.drawCircle(Offset(cx+dx,cy-38),10,Paint()..color=const Color(0xFF6BB8D4));
@@ -377,7 +375,7 @@ class _MascotP extends CustomPainter {
     }
     for(final dx in [-19.0,19.0]) {
       canvas.drawCircle(Offset(cx+dx,cy-13),6,
-          Paint()..color=const Color(0xFFFF9BAD).withOpacity(0.45));
+          Paint()..color=const Color(0xFFFF9BAD).withAlpha((255*(0.45)).round()));
     }
     canvas.drawPath(
       Path()..moveTo(cx-9,cy-8)..quadraticBezierTo(cx,cy-2,cx+9,cy-8),
@@ -400,3 +398,4 @@ class _CheckP extends CustomPainter {
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>false;
 }
+

@@ -49,13 +49,13 @@ class KCCDecoCircles extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Stack(children: [
     Positioned(top:-60, left:-60,
-        child:_DC(220, Colors.white.withOpacity(0.07))),
+        child:_DC(220, Colors.white.withAlpha((255*(0.07)).round()))),
     Positioned(bottom:-80, right:-40,
-        child:_DC(260, Colors.white.withOpacity(0.05))),
+        child:_DC(260, Colors.white.withAlpha((255*(0.05)).round()))),
     Positioned(top:80, right:28,
-        child:_DC(80, Colors.white.withOpacity(0.08))),
+        child:_DC(80, Colors.white.withAlpha((255*(0.08)).round()))),
     Positioned(bottom:180, left:18,
-        child:_DC(50, Colors.white.withOpacity(0.10))),
+        child:_DC(50, Colors.white.withAlpha((255*(0.10)).round()))),
   ]);
 }
 class _DC extends StatelessWidget {
@@ -82,7 +82,7 @@ class KCCCard extends StatelessWidget {
       color: KCCColors.cardBg,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [BoxShadow(
-          color: Colors.black.withOpacity(0.07),
+          color: Colors.black.withAlpha((255*(0.07)).round()),
           blurRadius: 16, offset: const Offset(0,5))],
     ),
     child: child,
@@ -109,7 +109,7 @@ class KCCButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16)),
         elevation: 3,
-        shadowColor: (color ?? KCCColors.yellow).withOpacity(0.35),
+        shadowColor: (color ?? KCCColors.yellow).withAlpha((255*(0.35)).round()),
       ),
       child: Text(label,
           style: const TextStyle(fontSize:16,
@@ -133,9 +133,9 @@ class KCCBackButton extends StatelessWidget {
     child: Container(
       width: 40, height: 40,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withAlpha((255*(0.15)).round()),
         shape: BoxShape.circle,
-        border: Border.all(color: color.withOpacity(0.30), width: 1.5),
+        border: Border.all(color: color.withAlpha((255*(0.30)).round()), width: 1.5),
       ),
       child: Center(
         child: CustomPaint(
@@ -198,10 +198,10 @@ class KCCTextField extends StatelessWidget {
           border: Border.all(
               color: errorText.isNotEmpty
                   ? KCCColors.coral
-                  : Colors.white.withOpacity(0.40),
+                  : Colors.white.withAlpha((255*(0.40)).round()),
               width: 2),
           boxShadow: [BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withAlpha((255*(0.06)).round()),
               blurRadius: 10, offset: const Offset(0,3))],
         ),
         child: TextField(
@@ -268,7 +268,7 @@ class KCCStepIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: i < current
             ? KCCColors.yellow
-            : Colors.white.withOpacity(0.30),
+            : Colors.white.withAlpha((255*(0.30)).round()),
         borderRadius: BorderRadius.circular(5),
       ),
     )),
@@ -346,7 +346,7 @@ class _HouseP extends CustomPainter {
         Rect.fromLTWH(s.width*0.38,s.height*0.64,
             s.width*0.24,s.height*0.30),
         const Radius.circular(2)),
-      Paint()..color=Colors.white.withOpacity(0.90));
+      Paint()..color=Colors.white.withAlpha((255*(0.90)).round()));
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>false;
 }
@@ -366,7 +366,7 @@ class _BookP extends CustomPainter {
             s.width*0.76,s.height*0.84),
         const Radius.circular(4)),
       Paint()..color=c);
-    final lp=Paint()..color=Colors.white.withOpacity(0.85)
+    final lp=Paint()..color=Colors.white.withAlpha((255*(0.85)).round())
       ..strokeWidth=s.width*0.08..strokeCap=StrokeCap.round;
     for(final dy in [0.35,0.52,0.68])
       canvas.drawLine(Offset(s.width*0.28,s.height*dy),
@@ -374,7 +374,7 @@ class _BookP extends CustomPainter {
     canvas.drawLine(
       Offset(s.width*0.12,s.height*0.08),
       Offset(s.width*0.12,s.height*0.92),
-      Paint()..color=Colors.black.withOpacity(0.14)
+      Paint()..color=Colors.black.withAlpha((255*(0.14)).round())
         ..strokeWidth=s.width*0.07);
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>false;
@@ -402,7 +402,7 @@ class _LockP extends CustomPainter {
       Paint()..color=c..style=PaintingStyle.stroke
         ..strokeWidth=s.width*0.13..strokeCap=StrokeCap.butt);
     canvas.drawCircle(Offset(s.width/2,s.height*0.70),
-        s.width*0.09,Paint()..color=Colors.white.withOpacity(0.85));
+        s.width*0.09,Paint()..color=Colors.white.withAlpha((255*(0.85)).round()));
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>false;
 }
@@ -496,3 +496,4 @@ class _RingP extends CustomPainter {
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>true;
 }
+

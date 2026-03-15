@@ -88,8 +88,8 @@ class _ProfileSelectorScreenState extends State<ProfileSelectorScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => widget.fromInsideApp,
+    return PopScope(
+      canPop: widget.fromInsideApp,
       child: Scaffold(
         body: Container(
           width: double.infinity,
@@ -132,7 +132,7 @@ class _ProfileSelectorScreenState extends State<ProfileSelectorScreen>
                       const SizedBox(height: 6),
                       Text('Piliin ang iyong profile para pumasok.',
                           style: TextStyle(
-                              color: Colors.white.withOpacity(0.75),
+                              color: Colors.white.withAlpha((255*(0.75)).round()),
                               fontSize: 14)),
 
                       const SizedBox(height: 40),
@@ -165,10 +165,10 @@ class _ProfileSelectorScreenState extends State<ProfileSelectorScreen>
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 16),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.12),
+                                        color: Colors.white.withAlpha((255*(0.12)).round()),
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
-                                            color: Colors.white.withOpacity(0.30),
+                                            color: Colors.white.withAlpha((255*(0.30)).round()),
                                             width: 1.5,
                                             style: BorderStyle.solid),
                                       ),
@@ -179,7 +179,7 @@ class _ProfileSelectorScreenState extends State<ProfileSelectorScreen>
                                           Container(
                                             width: 36, height: 36,
                                             decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(0.20),
+                                              color: Colors.white.withAlpha((255*(0.20)).round()),
                                               shape: BoxShape.circle,
                                             ),
                                             child: const Icon(Icons.add,
@@ -227,9 +227,9 @@ class _ProfileCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withAlpha((255*(0.15)).round()),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.25), width: 1.5),
+        border: Border.all(color: Colors.white.withAlpha((255*(0.25)).round()), width: 1.5),
       ),
       child: Row(children: [
         // Avatar
@@ -254,13 +254,14 @@ class _ProfileCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text('${profile.age} taong gulang  •  '
                '${profile.screenTimeLimitMinutes} min/araw',
-              style: TextStyle(color: Colors.white.withOpacity(0.70),
+              style: TextStyle(color: Colors.white.withAlpha((255*(0.70)).round()),
                   fontSize: 12)),
         ])),
         // Arrow
         Icon(Icons.chevron_right_rounded,
-            color: Colors.white.withOpacity(0.60), size: 26),
+            color: Colors.white.withAlpha((255*(0.60)).round()), size: 26),
       ]),
     ),
   );
 }
+

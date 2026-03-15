@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen>
     with WidgetsBindingObserver {
   Timer? _timer;
   int  _remaining = 0;
-  bool _locked = false, _loaded = false;
+  bool _loaded = false;
   int  _navIdx = 0; // 0=Tahanan, 1=Aktibidad, 2=Profil
 
   // Shorthand — falls back to 0 if profile has no id yet (shouldn't happen)
@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen>
                 duration:const Duration(milliseconds:400),
                 padding:const EdgeInsets.symmetric(horizontal:12,vertical:6),
                 decoration:BoxDecoration(
-                  color:_timerColor.withOpacity(0.18),
+                  color:_timerColor.withAlpha((255*(0.18)).round()),
                   borderRadius:BorderRadius.circular(20),
                   border:Border.all(color:_timerColor,width:1.5)),
                 child:Row(mainAxisSize:MainAxisSize.min,children:[
@@ -228,15 +228,15 @@ class _TahananTabState extends State<_TahananTab> {
             Positioned(top: -20, right: -20,
               child: Container(width: 130, height: 130,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.07), shape: BoxShape.circle))),
+                  color: Colors.white.withAlpha((255*(0.07)).round()), shape: BoxShape.circle))),
             Positioned(bottom: 10, left: -30,
               child: Container(width: 100, height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.06), shape: BoxShape.circle))),
+                  color: Colors.white.withAlpha((255*(0.06)).round()), shape: BoxShape.circle))),
             Positioned(top: 20, left: 100,
               child: Container(width: 50, height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD166).withOpacity(0.18), shape: BoxShape.circle))),
+                  color: const Color(0xFFFFD166).withAlpha((255*(0.18)).round()), shape: BoxShape.circle))),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(22, 20, 16, 0),
@@ -248,7 +248,7 @@ class _TahananTabState extends State<_TahananTab> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
+                      color: Colors.white.withAlpha((255*(0.18)).round()),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(_dayLabel(),
@@ -262,16 +262,16 @@ class _TahananTabState extends State<_TahananTab> {
                           height: 1.2)),
                   const SizedBox(height: 8),
                   Text('Handa ka na bang\nmagsanay ngayon?',
-                      style: TextStyle(color: Colors.white.withOpacity(0.80),
+                      style: TextStyle(color: Colors.white.withAlpha((255*(0.80)).round()),
                           fontSize: 13, height: 1.5)),
                   const SizedBox(height: 18),
                   // Timer pill
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
+                      color: Colors.white.withAlpha((255*(0.18)).round()),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.35), width: 1.5),
+                      border: Border.all(color: Colors.white.withAlpha((255*(0.35)).round()), width: 1.5),
                     ),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       KCCClockIcon(size: 14, color: timerColor),
@@ -281,7 +281,7 @@ class _TahananTabState extends State<_TahananTab> {
                               fontSize: 15, fontWeight: FontWeight.w900)),
                       const SizedBox(width: 6),
                       Text('natitira',
-                          style: TextStyle(color: Colors.white.withOpacity(0.75),
+                          style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
                               fontSize: 11)),
                     ]),
                   ),
@@ -308,7 +308,7 @@ class _TahananTabState extends State<_TahananTab> {
               child: LinearProgressIndicator(
                 value: ratio.clamp(0.0, 1.0),
                 minHeight: 8,
-                backgroundColor: Colors.white.withOpacity(0.20),
+                backgroundColor: Colors.white.withAlpha((255*(0.20)).round()),
                 valueColor: AlwaysStoppedAnimation<Color>(
                     ratio > 0.85 ? KCCColors.coral : const Color(0xFFFFD166)),
               ),
@@ -316,10 +316,10 @@ class _TahananTabState extends State<_TahananTab> {
             const SizedBox(height: 6),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('${(ratio * 100).round()}% nagamit',
-                  style: TextStyle(color: Colors.white.withOpacity(0.75),
+                  style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
                       fontSize: 11, fontWeight: FontWeight.w600)),
               Text('${widget.profile.screenTimeLimitMinutes} min / araw',
-                  style: TextStyle(color: Colors.white.withOpacity(0.75),
+                  style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
                       fontSize: 11, fontWeight: FontWeight.w600)),
             ]),
           ]),
@@ -357,7 +357,7 @@ class _TahananTabState extends State<_TahananTab> {
                           color: sel ? const Color(0xFF1A73E8)
                               : const Color(0xFFE2E8F0), width: 1.5),
                       boxShadow: sel ? [BoxShadow(
-                          color: const Color(0xFF1A73E8).withOpacity(0.25),
+                          color: const Color(0xFF1A73E8).withAlpha((255*(0.25)).round()),
                           blurRadius: 8, offset: const Offset(0, 3))] : [],
                     ),
                     child: Text(_cats[i],
@@ -386,7 +386,7 @@ class _TahananTabState extends State<_TahananTab> {
                 end: Alignment.bottomRight,
               ),
               boxShadow: [BoxShadow(
-                  color: const Color(0xFF0D9488).withOpacity(0.30),
+                  color: const Color(0xFF0D9488).withAlpha((255*(0.30)).round()),
                   blurRadius: 16, offset: const Offset(0, 6))],
             ),
             child: Stack(children: [
@@ -394,11 +394,11 @@ class _TahananTabState extends State<_TahananTab> {
               Positioned(right: -20, bottom: -20,
                 child: Container(width: 120, height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.10), shape: BoxShape.circle))),
+                    color: Colors.white.withAlpha((255*(0.10)).round()), shape: BoxShape.circle))),
               Positioned(right: 20, top: -10,
                 child: Container(width: 70, height: 70,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFD166).withOpacity(0.20),
+                    color: const Color(0xFFFFD166).withAlpha((255*(0.20)).round()),
                     shape: BoxShape.circle))),
               // Speech bubbles deco
               Positioned(right: 18, top: 18,
@@ -415,7 +415,7 @@ class _TahananTabState extends State<_TahananTab> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.20),
+                      color: Colors.white.withAlpha((255*(0.20)).round()),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text('PINAKABAGO',
@@ -532,7 +532,7 @@ class _MiniBubble extends StatelessWidget {
         bottomRight: Radius.circular(12), bottomLeft: Radius.circular(3),
       ),
       boxShadow: [BoxShadow(
-          color: color.withOpacity(0.4), blurRadius: 6, offset: const Offset(0, 2))],
+          color: color.withAlpha((255*(0.4)).round()), blurRadius: 6, offset: const Offset(0, 2))],
     ),
     child: Text(text,
         style: const TextStyle(color: Colors.white,
@@ -555,7 +555,7 @@ class _ActivityCard extends StatelessWidget {
       color: unlocked ? color : const Color(0xFFEEF2F7),
       borderRadius: BorderRadius.circular(22),
       boxShadow: unlocked ? [BoxShadow(
-          color: color.withOpacity(0.28), blurRadius: 14,
+          color: color.withAlpha((255*(0.28)).round()), blurRadius: 14,
           offset: const Offset(0, 5))] : [],
     ),
     child: Stack(children: [
@@ -563,7 +563,7 @@ class _ActivityCard extends StatelessWidget {
       Positioned(bottom: -12, right: -12,
         child: Container(width: 70, height: 70,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(unlocked ? 0.10 : 0.40),
+            color: Colors.white.withAlpha((255*(unlocked ? 0.10 : 0.40)).round()),
             shape: BoxShape.circle))),
       Padding(
         padding: const EdgeInsets.all(16),
@@ -575,7 +575,7 @@ class _ActivityCard extends StatelessWidget {
             Container(
               width: 44, height: 44,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(unlocked ? 0.20 : 0.60),
+                color: Colors.white.withAlpha((255*(unlocked ? 0.20 : 0.60)).round()),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -590,7 +590,7 @@ class _ActivityCard extends StatelessWidget {
               Container(
                 width: 28, height: 28,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.20), shape: BoxShape.circle),
+                  color: Colors.white.withAlpha((255*(0.20)).round()), shape: BoxShape.circle),
                 child: const Icon(Icons.play_arrow_rounded,
                     size: 18, color: Colors.white),
               ),
@@ -603,7 +603,7 @@ class _ActivityCard extends StatelessWidget {
             Text(desc,
                 style: TextStyle(fontSize: 11, height: 1.3,
                     color: unlocked
-                        ? Colors.white.withOpacity(0.80)
+                        ? Colors.white.withAlpha((255*(0.80)).round())
                         : KCCColors.textMuted)),
           ]),
         ]),
@@ -650,7 +650,7 @@ class _ChildMascotP extends CustomPainter {
       bodyP);
 
     // shirt stripe
-    final stripeP = Paint()..color = Colors.white.withOpacity(0.22);
+    final stripeP = Paint()..color = Colors.white.withAlpha((255*(0.22)).round());
     canvas.drawRect(
       Rect.fromCenter(center: Offset(cx, cy + 20), width: 68, height: 10),
       stripeP);
@@ -718,7 +718,7 @@ class _ChildMascotP extends CustomPainter {
     canvas.drawLine(Offset(cx + 7,  cy - 45), Offset(cx + 16, cy - 47), browP);
 
     // ── Rosy cheeks
-    final cheekP = Paint()..color = const Color(0xFFFF9BAD).withOpacity(0.45);
+    final cheekP = Paint()..color = const Color(0xFFFF9BAD).withAlpha((255*(0.45)).round());
     canvas.drawCircle(Offset(cx - 23, cy - 27), 7, cheekP);
     canvas.drawCircle(Offset(cx + 23, cy - 27), 7, cheekP);
 
@@ -761,7 +761,7 @@ class _ChildMascotP extends CustomPainter {
           const Radius.circular(4)), bookP);
     canvas.drawRect(const Rect.fromLTWH(10, 0, 2, 28), bookP2);
     // lines on book
-    final lineP = Paint()..color = Colors.white.withOpacity(0.6)
+    final lineP = Paint()..color = Colors.white.withAlpha((255*(0.6)).round())
       ..strokeWidth = 1.5;
     canvas.drawLine(const Offset(3, 8),  const Offset(8, 8),  lineP);
     canvas.drawLine(const Offset(3, 13), const Offset(8, 13), lineP);
@@ -827,8 +827,8 @@ class _LevelRow extends StatelessWidget {
       color:KCCColors.cardBg,
       borderRadius:BorderRadius.circular(16),
       border:Border.all(
-          color:unlocked?color.withOpacity(0.25):KCCColors.bgLight,width:1.5),
-      boxShadow:[BoxShadow(color:Colors.black.withOpacity(0.05),
+          color:unlocked?color.withAlpha((255*(0.25)).round()):KCCColors.bgLight,width:1.5),
+      boxShadow:[BoxShadow(color:Colors.black.withAlpha((255*(0.05)).round()),
           blurRadius:8,offset:const Offset(0,3))]),
     child:Row(children:[
       Container(
@@ -855,7 +855,7 @@ class _LevelRow extends StatelessWidget {
       if(unlocked) Container(
         width:28,height:28,
         decoration:BoxDecoration(
-            color:color.withOpacity(0.12),shape:BoxShape.circle),
+            color:color.withAlpha((255*(0.12)).round()),shape:BoxShape.circle),
         child:Center(child:CustomPaint(
             size:const Size(11,11),painter:_ArrowR(color:color))),
       ),
@@ -891,7 +891,7 @@ class _BottomNav extends StatelessWidget {
       color: Colors.white,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       boxShadow: [BoxShadow(
-          color: KCCColors.blue.withOpacity(0.12),
+          color: KCCColors.blue.withAlpha((255*(0.12)).round()),
           blurRadius: 20, offset: const Offset(0, -6))],
     ),
     child: SafeArea(top: false,
@@ -928,7 +928,7 @@ class _NI extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
       decoration: BoxDecoration(
-        color: selected ? selColor.withOpacity(0.12) : Colors.transparent,
+        color: selected ? selColor.withAlpha((255*(0.12)).round()) : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -940,58 +940,5 @@ class _NI extends StatelessWidget {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// LOCK OVERLAY
-// ═══════════════════════════════════════════════════════════════════════════════
-class _LockOverlay extends StatelessWidget {
-  final String Function(int) fmt;
-  const _LockOverlay({required this.fmt});
-  @override
-  Widget build(BuildContext context) => Container(
-    color:const Color(0xFF0D1B3E).withOpacity(0.97),
-    child:SafeArea(
-      child:Center(child:Padding(
-        padding:const EdgeInsets.symmetric(horizontal:36),
-        child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
-          Container(
-            width:110,height:110,
-            decoration:BoxDecoration(
-              color:KCCColors.coral.withOpacity(0.12),shape:BoxShape.circle,
-              border:Border.all(color:KCCColors.coral.withOpacity(0.35),width:2)),
-            child:Center(child:KCCLockIcon(size:52,color:KCCColors.coral)),
-          ),
-          const SizedBox(height:28),
-          const Text('Tapos na ang\nOras ng Paggamit',
-              textAlign:TextAlign.center,
-              style:TextStyle(fontSize:26,fontWeight:FontWeight.w900,
-                  color:Colors.white,height:1.3)),
-          const SizedBox(height:14),
-          Text(
-            'Naabot mo na ang limitasyon ng iyong oras ngayon. '
-            'Mangyaring bumalik bukas para magpatuloy.',
-            textAlign:TextAlign.center,
-            style:TextStyle(fontSize:15,
-                color:Colors.white.withOpacity(0.60),height:1.6)),
-          const SizedBox(height:32),
-          Container(
-            padding:const EdgeInsets.symmetric(horizontal:24,vertical:14),
-            decoration:BoxDecoration(
-              color:KCCColors.yellow.withOpacity(0.12),
-              borderRadius:BorderRadius.circular(14),
-              border:Border.all(
-                  color:KCCColors.yellow.withOpacity(0.40),width:1.5)),
-            child:Row(mainAxisSize:MainAxisSize.min,children:[
-              KCCClockIcon(size:18,color:KCCColors.yellow),
-              const SizedBox(width:10),
-              const Text('Mag-reset bukas ng umaga',
-                  style:TextStyle(color:KCCColors.yellow,
-                      fontWeight:FontWeight.w600,fontSize:14)),
-            ]),
-          ),
-        ]),
-      )),
-    ),
-  );
-}
-
 // ─── (mascot used in HomeScreen is now _ChildMascotP inside _TahananTab) ──────
+

@@ -1,11 +1,3 @@
-// lib/screens/welcome_back_screen.dart
-//
-// Shown when the app has a saved profile but the user has signed out.
-// Lets the child (or parent) tap "Pumasok" to log back in without
-// losing any data or progress.
-//
-// Fully offline — no internet needed.
-
 import 'package:flutter/material.dart';
 import '../models/child_profile.dart';
 import '../services/profile_service.dart';
@@ -23,99 +15,114 @@ class WelcomeBackScreen extends StatefulWidget {
 
 class _WelcomeBackScreenState extends State<WelcomeBackScreen>
     with SingleTickerProviderStateMixin {
-
   late AnimationController _ctrl;
-  late Animation<double>   _fadeAnim;
-  late Animation<Offset>   _slideAnim;
+  late Animation<double> _fadeAnim;
+  late Animation<Offset> _slideAnim;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600));
-    _fadeAnim  = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.15), end: Offset.zero,
+      begin: const Offset(0, 0.15),
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
     _ctrl.forward();
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _login() async {
-    await ProfileService.login();
+    await ProfileService.restoreProfile();
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 450),
       pageBuilder: (_, a, __) => FadeTransition(
-          opacity: a, child: HomeScreen(profile: widget.profile)),
+        opacity: a,
+        child: HomeScreen(profile: widget.profile),
+      ),
     ));
   }
 
   Future<void> _switchProfile() async {
-    // Hard reset — go to onboarding for a new profile
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(28),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-              width: 64, height: 64,
-              decoration: BoxDecoration(
-                color: KCCColors.coral.withOpacity(0.10),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.warning_amber_rounded,
-                  size: 32, color: KCCColors.coral),
-            ),
-            const SizedBox(height: 16),
-            const Text('Palitan ang Profile?',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900,
-                    color: KCCColors.darkNavy)),
-            const SizedBox(height: 8),
-            const Text(
-              'Mabubura ang lahat ng data at progreso ng kasalukuyang '
-              'profile. Hindi ito mababawi.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: KCCColors.textMuted, height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            Row(children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: KCCColors.textMuted),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                  ),
-                  child: const Text('Huwag',
-                      style: TextStyle(color: KCCColors.textMuted,
-                          fontWeight: FontWeight.w700)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: KCCColors.coral.withAlpha((255 * (0.10)).round()),
+                  shape: BoxShape.circle,
                 ),
+                child: const Icon(Icons.warning_amber_rounded,
+                    size: 32, color: KCCColors.coral),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KCCColors.coral,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                    elevation: 0,
+              const SizedBox(height: 16),
+              const Text('Palitan ang Profile?',
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w900,
+                      color: KCCColors.darkNavy)),
+              const SizedBox(height: 8),
+              const Text(
+                'Mabubura ang lahat ng data at progreso ng kasalukuyang '
+                'profile. Hindi ito mababawi.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 13, color: KCCColors.textMuted, height: 1.5),
+              ),
+              const SizedBox(height: 24),
+              Row(children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: KCCColors.textMuted),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                    ),
+                    child: const Text('Huwag',
+                        style: TextStyle(
+                            color: KCCColors.textMuted,
+                            fontWeight: FontWeight.w700)),
                   ),
-                  child: const Text('Oo, palitan',
-                      style: TextStyle(color: Colors.white,
-                          fontWeight: FontWeight.w700)),
                 ),
-              ),
-            ]),
-          ]),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KCCColors.coral,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      elevation: 0,
+                    ),
+                    child: const Text('Oo, palitan',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ]),
+            ],
+          ),
         ),
       ),
     );
@@ -131,8 +138,11 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
 
   @override
   Widget build(BuildContext context) {
+    final name = widget.profile.name.trim();
+    final initial = name.isEmpty ? '?' : name[0].toUpperCase();
+
     return WillPopScope(
-      onWillPop: () async => false, // hindi makalabas sa welcome-back screen
+      onWillPop: () async => false,
       child: Scaffold(
         body: Container(
           width: double.infinity,
@@ -154,34 +164,33 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-
-                      // ── Avatar circle ────────────────────────────────────
                       Container(
-                        width: 110, height: 110,
+                        width: 110,
+                        height: 110,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withAlpha((255 * (0.15)).round()),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: Colors.white.withOpacity(0.30), width: 2.5),
+                            color: Colors.white.withAlpha((255 * (0.30)).round()),
+                            width: 2.5,
+                          ),
                         ),
                         child: Center(
                           child: Text(
-                            widget.profile.name.characters.first.toUpperCase(),
+                            initial,
                             style: const TextStyle(
-                              fontSize: 52, fontWeight: FontWeight.w900,
+                              fontSize: 52,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
-                      // ── Welcome text ─────────────────────────────────────
                       Text(
                         'Maligayang pagbabalik,',
                         style: TextStyle(
-                            color: Colors.white.withOpacity(0.80),
+                            color: Colors.white.withAlpha((255 * (0.80)).round()),
                             fontSize: 15),
                       ),
                       const SizedBox(height: 4),
@@ -193,36 +202,34 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-
                       const SizedBox(height: 8),
-
-                      // ── Info pill ─────────────────────────────────────────
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withAlpha((255 * (0.15)).round()),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: Colors.white.withOpacity(0.25), width: 1),
+                              color:
+                                  Colors.white.withAlpha((255 * (0.25)).round()),
+                              width: 1),
                         ),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          KCCClockIcon(size: 14,
-                              color: const Color(0xFFFFD166)),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${widget.profile.age} taong gulang  •  '
-                            '${widget.profile.screenTimeLimitMinutes} min/araw',
-                            style: TextStyle(
-                                color: Colors.white.withOpacity(0.85),
-                                fontSize: 13, fontWeight: FontWeight.w600),
-                          ),
-                        ]),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            KCCClockIcon(size: 14, color: const Color(0xFFFFD166)),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${widget.profile.age} taong gulang  •  ${widget.profile.screenTimeLimitMinutes} min/araw',
+                              style: TextStyle(
+                                  color: Colors.white.withAlpha((255 * (0.85)).round()),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
-
                       const SizedBox(height: 48),
-
-                      // ── Enter button ──────────────────────────────────────
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -239,15 +246,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                             'Pumasok',
                             style: TextStyle(
                               color: Color(0xFF1A73E8),
-                              fontSize: 18, fontWeight: FontWeight.w900,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 16),
-
-                      // ── Switch profile link ───────────────────────────────
                       GestureDetector(
                         onTap: _switchProfile,
                         child: Padding(
@@ -255,7 +260,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                           child: Text(
                             'Hindi ikaw? Palitan ang profile',
                             style: TextStyle(
-                                color: Colors.white.withOpacity(0.65),
+                                color: Colors.white.withAlpha((255 * (0.65)).round()),
                                 fontSize: 13,
                                 decoration: TextDecoration.underline,
                                 decorationColor: Colors.white38),

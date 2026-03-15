@@ -65,7 +65,7 @@ class KCCCard extends StatelessWidget {
           : null,
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF6366F1).withOpacity(0.08),
+          color: const Color(0xFF6366F1).withAlpha((255*(0.08)).round()),
           blurRadius: 16,
           offset: const Offset(0, 6),
         ),
@@ -181,13 +181,13 @@ class KCCDecoCircles extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
     children: [
       Positioned(top: 40, left: 20,
-        child: _Blob(size: 110, color: KCCColors.yellow.withOpacity(0.22))),
+        child: _Blob(size: 110, color: KCCColors.yellow.withAlpha((255*(0.22)).round()))),
       Positioned(top: 160, right: 30,
-        child: _Blob(size: 90, color: KCCColors.coral.withOpacity(0.18))),
+        child: _Blob(size: 90, color: KCCColors.coral.withAlpha((255*(0.18)).round()))),
       Positioned(bottom: 200, left: 40,
-        child: _Blob(size: 70, color: KCCColors.green.withOpacity(0.20))),
+        child: _Blob(size: 70, color: KCCColors.green.withAlpha((255*(0.20)).round()))),
       Positioned(bottom: 100, right: 20,
-        child: _Blob(size: 60, color: KCCColors.purple.withOpacity(0.18))),
+        child: _Blob(size: 60, color: KCCColors.purple.withAlpha((255*(0.18)).round()))),
     ],
   );
 }
@@ -221,7 +221,7 @@ class KCCButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         elevation: 4,
-        shadowColor: (color ?? KCCColors.blue).withOpacity(0.40),
+        shadowColor: (color ?? KCCColors.blue).withAlpha((255*(0.40)).round()),
       ),
       child: Text(
         label,
@@ -252,7 +252,7 @@ class KCCStepIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             color: index < current
                 ? dotColors[index % dotColors.length]
-                : Colors.white.withOpacity(0.35),
+                : Colors.white.withAlpha((255*(0.35)).round()),
             borderRadius: BorderRadius.circular(5),
           ),
         ),
@@ -355,3 +355,4 @@ class KCCProgressRing extends StatelessWidget {
     ),
   );
 }
+

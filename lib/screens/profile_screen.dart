@@ -63,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Container(
               width: 72, height: 72,
               decoration: BoxDecoration(
-                color: KCCColors.blue.withOpacity(0.10),
+                color: KCCColors.blue.withAlpha((255*(0.10)).round()),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.logout_rounded,
@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: KCCColors.green.withOpacity(0.10),
+                color: KCCColors.green.withAlpha((255*(0.10)).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -208,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Container(
               padding:const EdgeInsets.symmetric(horizontal:10,vertical:4),
               decoration:BoxDecoration(
-                color:KCCColors.blue.withOpacity(0.10),
+                color:KCCColors.blue.withAlpha((255*(0.10)).round()),
                 borderRadius:BorderRadius.circular(20)),
               child:Row(mainAxisSize:MainAxisSize.min,children:[
                 KCCClockIcon(size:12,color:KCCColors.blue),
@@ -385,16 +385,16 @@ class _ProfileScreenState extends State<ProfileScreen>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
-              color: KCCColors.blue.withOpacity(0.07),
+              color: KCCColors.blue.withAlpha((255*(0.07)).round()),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                  color: KCCColors.blue.withOpacity(0.25), width: 1.5),
+                  color: KCCColors.blue.withAlpha((255*(0.25)).round()), width: 1.5),
             ),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
                 width: 32, height: 32,
                 decoration: BoxDecoration(
-                  color: KCCColors.blue.withOpacity(0.12),
+                  color: KCCColors.blue.withAlpha((255*(0.12)).round()),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.switch_account_rounded,
@@ -417,15 +417,15 @@ class _ProfileScreenState extends State<ProfileScreen>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
-              color: KCCColors.coral.withOpacity(0.08),
+              color: KCCColors.coral.withAlpha((255*(0.08)).round()),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: KCCColors.coral.withOpacity(0.35), width: 1.5),
+              border: Border.all(color: KCCColors.coral.withAlpha((255*(0.35)).round()), width: 1.5),
             ),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
                 width: 32, height: 32,
                 decoration: BoxDecoration(
-                  color: KCCColors.coral.withOpacity(0.15),
+                  color: KCCColors.coral.withAlpha((255*(0.15)).round()),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.logout_rounded, size: 18, color: KCCColors.coral),
@@ -489,7 +489,7 @@ class _StatRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(children:[
     Container(
       width:36,height:36,
-      decoration:BoxDecoration(color:color.withOpacity(0.10),
+      decoration:BoxDecoration(color:color.withAlpha((255*(0.10)).round()),
           borderRadius:BorderRadius.circular(10)),
       child:Center(child:icon),
     ),
@@ -522,7 +522,7 @@ class _MedMascotP extends CustomPainter {
     }
     for(final dx in [-9.0,9.0])
       canvas.drawCircle(Offset(cx+dx,cy-4),3.5,
-          Paint()..color=const Color(0xFFFF9BAD).withOpacity(0.45));
+          Paint()..color=const Color(0xFFFF9BAD).withAlpha((255*(0.45)).round()));
     canvas.drawPath(
       Path()..moveTo(cx-5,cy+1)..quadraticBezierTo(cx,cy+5,cx+5,cy+1),
       Paint()..color=const Color(0xFF1A1A2E)..style=PaintingStyle.stroke
@@ -530,3 +530,4 @@ class _MedMascotP extends CustomPainter {
   }
   @override bool shouldRepaint(covariant CustomPainter o)=>false;
 }
+

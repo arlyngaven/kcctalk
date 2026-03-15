@@ -14,7 +14,6 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../models/child_profile.dart';
 import '../services/profile_service.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
@@ -180,22 +179,22 @@ class _SplashScreenState extends State<SplashScreen>
             Positioned(
               top: -60,
               left: -60,
-              child: _DecoCircle(size: 220, color: Colors.white.withOpacity(0.07)),
+              child: _DecoCircle(size: 220, color: Colors.white.withAlpha((255*(0.07)).round())),
             ),
             Positioned(
               bottom: -80,
               right: -40,
-              child: _DecoCircle(size: 260, color: Colors.white.withOpacity(0.06)),
+              child: _DecoCircle(size: 260, color: Colors.white.withAlpha((255*(0.06)).round())),
             ),
             Positioned(
               top: 80,
               right: 30,
-              child: _DecoCircle(size: 80, color: Colors.white.withOpacity(0.08)),
+              child: _DecoCircle(size: 80, color: Colors.white.withAlpha((255*(0.08)).round())),
             ),
             Positioned(
               bottom: 180,
               left: 20,
-              child: _DecoCircle(size: 50, color: Colors.white.withOpacity(0.1)),
+              child: _DecoCircle(size: 50, color: Colors.white.withAlpha((255*(0.1)).round())),
             ),
 
             // ── Twinkling stars ─────────────────────────────────────────
@@ -334,7 +333,7 @@ class _MascotPainter extends CustomPainter {
     );
 
     // ── Tummy (lighter circle)
-    final tummyPaint = Paint()..color = Colors.white.withOpacity(0.35);
+    final tummyPaint = Paint()..color = Colors.white.withAlpha((255*(0.35)).round());
     canvas.drawOval(
       Rect.fromCenter(center: Offset(cx, cy + 18), width: 52, height: 60),
       tummyPaint,
@@ -371,7 +370,7 @@ class _MascotPainter extends CustomPainter {
     canvas.drawCircle(Offset(cx + 11, cy - 33), 2.5, eyeShine);
 
     // ── Rosy cheeks
-    final cheekPaint = Paint()..color = const Color(0xFFFF9BAD).withOpacity(0.5);
+    final cheekPaint = Paint()..color = const Color(0xFFFF9BAD).withAlpha((255*(0.5)).round());
     canvas.drawCircle(Offset(cx - 26, cy - 18), 8, cheekPaint);
     canvas.drawCircle(Offset(cx + 26, cy - 18), 8, cheekPaint);
 
@@ -449,10 +448,10 @@ class _AppTitle extends StatelessWidget {
           padding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withAlpha((255*(0.15)).round()),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-                color: Colors.white.withOpacity(0.3), width: 1),
+                color: Colors.white.withAlpha((255*(0.3)).round()), width: 1),
           ),
           child: const Text(
             'Speech Practice App',
@@ -484,7 +483,7 @@ class _ColorLetter extends StatelessWidget {
         color: color,
         shadows: [
           Shadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withAlpha((255*(0.2)).round()),
             offset: const Offset(2, 3),
             blurRadius: 0,
           ),
@@ -522,7 +521,7 @@ class _AnimatedBubble extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withAlpha((255*(0.4)).round()),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -564,7 +563,7 @@ class _LoadingDots extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5 + 0.5 * scale),
+                  color: Colors.white.withAlpha((255*(0.5 + 0.5 * scale)).round()),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -612,7 +611,7 @@ class _StarShape extends StatelessWidget {
 class _StarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withOpacity(0.9);
+    final paint = Paint()..color = Colors.white.withAlpha((255*(0.9)).round());
     final cx = size.width / 2;
     final cy = size.height / 2;
     final r = size.width / 2;
@@ -639,3 +638,4 @@ class _StarPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
