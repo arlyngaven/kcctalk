@@ -41,7 +41,8 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
   }
 
   Future<void> _login() async {
-    await ProfileService.restoreProfile();
+    // ✅ FIXED: restoreProfile() → loginAs(id)
+    await ProfileService.loginAs(widget.profile.id!);
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 450),
@@ -66,7 +67,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: KCCColors.coral.withAlpha((255 * (0.10)).round()),
+                  color: KCCColors.coral.withAlpha((255 * 0.10).round()),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.warning_amber_rounded,
@@ -127,7 +128,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
       ),
     );
     if (confirm != true || !mounted) return;
-    await ProfileService.clearProfile();
+    await ProfileService.deleteProfile(widget.profile.id!);
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 450),
@@ -138,7 +139,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.profile.name.trim();
+    final name    = widget.profile.name.trim();
     final initial = name.isEmpty ? '?' : name[0].toUpperCase();
 
     return WillPopScope(
@@ -168,10 +169,10 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                         width: 110,
                         height: 110,
                         decoration: BoxDecoration(
-                          color: Colors.white.withAlpha((255 * (0.15)).round()),
+                          color: Colors.white.withAlpha((255 * 0.15).round()),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white.withAlpha((255 * (0.30)).round()),
+                            color: Colors.white.withAlpha((255 * 0.30).round()),
                             width: 2.5,
                           ),
                         ),
@@ -190,7 +191,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                       Text(
                         'Maligayang pagbabalik,',
                         style: TextStyle(
-                            color: Colors.white.withAlpha((255 * (0.80)).round()),
+                            color: Colors.white.withAlpha((255 * 0.80).round()),
                             fontSize: 15),
                       ),
                       const SizedBox(height: 4),
@@ -207,22 +208,24 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withAlpha((255 * (0.15)).round()),
+                          color: Colors.white.withAlpha((255 * 0.15).round()),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color:
-                                  Colors.white.withAlpha((255 * (0.25)).round()),
+                              color: Colors.white.withAlpha((255 * 0.25).round()),
                               width: 1),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            KCCClockIcon(size: 14, color: const Color(0xFFFFD166)),
+                            KCCClockIcon(
+                                size: 14, color: const Color(0xFFFFD166)),
                             const SizedBox(width: 6),
                             Text(
-                              '${widget.profile.age} taong gulang  •  ${widget.profile.screenTimeLimitMinutes} min/araw',
+                              '${widget.profile.age} taong gulang  •  '
+                              '${widget.profile.screenTimeLimitMinutes} min/araw',
                               style: TextStyle(
-                                  color: Colors.white.withAlpha((255 * (0.85)).round()),
+                                  color: Colors.white
+                                      .withAlpha((255 * 0.85).round()),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -260,7 +263,8 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                           child: Text(
                             'Hindi ikaw? Palitan ang profile',
                             style: TextStyle(
-                                color: Colors.white.withAlpha((255 * (0.65)).round()),
+                                color: Colors.white
+                                    .withAlpha((255 * 0.65).round()),
                                 fontSize: 13,
                                 decoration: TextDecoration.underline,
                                 decorationColor: Colors.white38),
