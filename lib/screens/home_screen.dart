@@ -907,7 +907,7 @@ class _BottomNav extends StatelessWidget {
               label: 'Aktibidad', selected: current == 1, selColor: KCCColors.teal, onTap: () => onTap(1)),
           _NI(icon: KCCPersonIcon(size: 26,
               color: current == 2 ? KCCColors.purple : KCCColors.textMuted),
-              label: 'Profil', selected: current == 2, selColor: KCCColors.purple, onTap: () => onTap(2)),
+              label: 'Profile', selected: current == 2, selColor: KCCColors.purple, onTap: () => onTap(2)),
         ]),
       ),
     ),
