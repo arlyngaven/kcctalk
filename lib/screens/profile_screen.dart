@@ -231,22 +231,13 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         Row(children:[
           Expanded(child:_RingCard(
-            anim:_ringAnim, progress:usageRatio,
-            fillColor:usageRatio>0.85?KCCColors.coral:KCCColors.blue,
-            label:'Oras\nNagamit',
-            value:_fmtTime(_usedSeconds),
-            icon:KCCClockIcon(size:18,
-                color:usageRatio>0.85?KCCColors.coral:KCCColors.blue),
-          )),
-          const SizedBox(width:12),
-          Expanded(child:_RingCard(
             anim:_ringAnim, progress:levelRatio,
             fillColor:KCCColors.teal,
             label:'Mga Antas\nNatapos',
             value:'$levelsFinished/$totalLevels',
             icon:KCCBookIcon(size:18,color:KCCColors.teal),
           )),
-          const SizedBox(width:12),
+          const SizedBox(width:16),
           Expanded(child:_RingCard(
             anim:_ringAnim, progress:starRatio,
             fillColor:KCCColors.yellow,
@@ -283,9 +274,14 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           const SizedBox(height:10),
-          Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,children:[
-            Text('Nagamit: ${_fmtTime(_usedSeconds)}',
-                style:const TextStyle(fontSize:12,color:KCCColors.textMuted)),
+          Row(children:[
+            Expanded(
+              child: Text('Nagamit: ${_fmtTime(_usedSeconds)}',
+                  overflow: TextOverflow.ellipsis,
+                  style:const TextStyle(fontSize:12,color:KCCColors.textMuted)),
+            ),
+            const SizedBox(width:12),
+            const SizedBox(width:12),
             Text('Limitasyon: ${widget.profile.screenTimeLimitMinutes} min',
                 style:const TextStyle(fontSize:12,color:KCCColors.textMuted)),
           ]),
@@ -300,13 +296,15 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height:12),
 
         KCCCard(child:Column(children:[
-          Row(mainAxisAlignment:MainAxisAlignment.center,
-              children:List.generate(totalStars,(i)=>Padding(
-            padding:const EdgeInsets.symmetric(horizontal:3),
-            child:KCCStarIcon(
-              size:26,
-              color:i<starsEarned?KCCColors.yellow:KCCColors.bgLight),
-          ))),
+          FittedBox(
+            child: Row(mainAxisAlignment:MainAxisAlignment.center,
+                children:List.generate(totalStars,(i)=>Padding(
+              padding:const EdgeInsets.symmetric(horizontal:3),
+              child:KCCStarIcon(
+                size:26,
+                color:i<starsEarned?KCCColors.yellow:KCCColors.bgLight),
+            ))),
+          ),
           const SizedBox(height:14),
           Text('$starsEarned sa $totalStars na bituin ang nakuha mo!',
               textAlign:TextAlign.center,
@@ -458,23 +456,25 @@ class _RingCard extends StatelessWidget {
       required this.value,required this.icon});
   @override
   Widget build(BuildContext context) => KCCCard(
-    padding:const EdgeInsets.symmetric(horizontal:8,vertical:14),
+    padding:const EdgeInsets.symmetric(horizontal:12,vertical:20),
     child:Column(children:[
       AnimatedBuilder(
         animation:anim,
         builder:(_,__) => KCCProgressRing(
-          size:66,strokeWidth:7,
+          size:76,strokeWidth:8,
           progress:progress*anim.value,
           fillColor:fillColor,
           child:icon,
         ),
       ),
-      const SizedBox(height:8),
-      Text(value,style:TextStyle(fontSize:13,
-          fontWeight:FontWeight.w900,color:fillColor)),
-      const SizedBox(height:3),
+      const SizedBox(height:12),
+      Text(value,
+          textAlign:TextAlign.center,
+          style:TextStyle(fontSize:15,
+              fontWeight:FontWeight.w900,color:fillColor)),
+      const SizedBox(height:4),
       Text(label,textAlign:TextAlign.center,
-          style:const TextStyle(fontSize:10,
+          style:const TextStyle(fontSize:11,
               color:KCCColors.textMuted,height:1.3)),
     ]),
   );

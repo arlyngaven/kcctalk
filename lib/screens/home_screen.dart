@@ -85,11 +85,7 @@ class _HomeScreenState extends State<HomeScreen>
   String _fmt(int s) =>
       '${(s~/60).toString().padLeft(2,'0')}:${(s%60).toString().padLeft(2,'0')}';
 
-  Color get _timerColor {
-    if (_remaining>300) return KCCColors.green;
-    if (_remaining>60)  return KCCColors.yellow;
-    return KCCColors.coral;
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,23 +129,7 @@ class _HomeScreenState extends State<HomeScreen>
               // Pangalan ng app
               Row(children:_colorLetters('KCCTALK',20)),
               const Spacer(),
-              // Timer pill (only shown outside Tahanan tab)
-              if (_navIdx != 0)
-              AnimatedContainer(
-                duration:const Duration(milliseconds:400),
-                padding:const EdgeInsets.symmetric(horizontal:12,vertical:6),
-                decoration:BoxDecoration(
-                  color:_timerColor.withAlpha((255*(0.18)).round()),
-                  borderRadius:BorderRadius.circular(20),
-                  border:Border.all(color:_timerColor,width:1.5)),
-                child:Row(mainAxisSize:MainAxisSize.min,children:[
-                  KCCClockIcon(size:14,color:_timerColor),
-                  const SizedBox(width:5),
-                  Text(_fmt(_remaining),
-                      style:TextStyle(fontSize:13,
-                          fontWeight:FontWeight.w700,color:_timerColor)),
-                ]),
-              ),
+    
             ]),
           ),
           // ── Body ────────────────────────────────────────────────────────
@@ -314,10 +294,14 @@ class _TahananTabState extends State<_TahananTab> {
               ),
             ),
             const SizedBox(height: 6),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('${(ratio * 100).round()}% nagamit',
-                  style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
-                      fontSize: 11, fontWeight: FontWeight.w600)),
+            Row(children: [
+              Expanded(
+                child: Text('${(ratio * 100).round()}% nagamit',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
+                        fontSize: 11, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 8),
               Text('${widget.profile.screenTimeLimitMinutes} min / araw',
                   style: TextStyle(color: Colors.white.withAlpha((255*(0.75)).round()),
                       fontSize: 11, fontWeight: FontWeight.w600)),
