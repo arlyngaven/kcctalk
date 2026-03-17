@@ -116,6 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
+        // ignore: unnecessary_underscores
         pageBuilder: (_, a, __) =>
             FadeTransition(opacity: a, child: HomeScreen(profile: saved)),
       ),
@@ -125,6 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) => PopScope(
+    // ignore: deprecated_member_use
     onPopInvoked: (didPop) {
       if (_cur > _startPage) { _back(); }
       else if (widget.addingProfile) { Navigator.of(context).pop(); }

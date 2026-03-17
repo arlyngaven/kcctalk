@@ -23,6 +23,7 @@ class KCCTalkApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF1A73E8),
+          // ignore: deprecated_member_use
           background: const Color(0xFFFFF8F0),
         ),
         useMaterial3: true,

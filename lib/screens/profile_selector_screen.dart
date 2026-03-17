@@ -62,6 +62,7 @@ class _ProfileSelectorScreenState extends State<ProfileSelectorScreen>
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 450),
+        // ignore: unnecessary_underscores
         pageBuilder: (_, a, __) =>
             FadeTransition(opacity: a, child: HomeScreen(profile: profile)),
       ),

@@ -350,6 +350,7 @@ class KCCProgressRing extends StatelessWidget {
           backgroundColor: KCCColors.bgLight,
           valueColor: AlwaysStoppedAnimation<Color>(fillColor ?? KCCColors.blue),
         ),
+        // ignore: use_null_aware_elements
         if (child != null) child!,
       ],
     ),

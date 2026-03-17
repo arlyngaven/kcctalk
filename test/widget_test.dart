@@ -369,6 +369,7 @@ class _BookP extends CustomPainter {
     final lp=Paint()..color=Colors.white.withAlpha((255*(0.85)).round())
       ..strokeWidth=s.width*0.08..strokeCap=StrokeCap.round;
     for(final dy in [0.35,0.52,0.68])
+      // ignore: curly_braces_in_flow_control_structures
       canvas.drawLine(Offset(s.width*0.28,s.height*dy),
           Offset(s.width*0.72,s.height*dy),lp);
     canvas.drawLine(
@@ -420,8 +421,11 @@ class _StarP extends CustomPainter {
     final path=Path();
     for(int i=0;i<5;i++){
       final oa=(i*4*pi/5)-pi/2, ia=oa+(2*pi/10);
-      if(i==0) path.moveTo(cx+r*cos(oa),cy+r*sin(oa));
-      else path.lineTo(cx+r*cos(oa),cy+r*sin(oa));
+      if(i==0) {
+        path.moveTo(cx+r*cos(oa),cy+r*sin(oa));
+      } else {
+        path.lineTo(cx+r*cos(oa),cy+r*sin(oa));
+      }
       path.lineTo(cx+(r*0.42)*cos(ia),cy+(r*0.42)*sin(ia));
     }
     path.close();
@@ -475,7 +479,7 @@ class KCCProgressRing extends StatelessWidget {
     child:Stack(alignment:Alignment.center, children:[
       CustomPaint(size:Size(size,size),
           painter:_RingP(progress,fillColor,trackColor,strokeWidth)),
-      if(child!=null) child!,
+      ?child,
     ]),
   );
 }

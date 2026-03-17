@@ -96,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
     }
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // Back button ng system: kung hindi Tahanan, bumalik sa Tahanan
@@ -326,6 +327,7 @@ class _TahananTabState extends State<_TahananTab> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _cats.length,
+              // ignore: unnecessary_underscores
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final sel = i == _selectedCat;
@@ -923,6 +925,4 @@ class _NI extends StatelessWidget {
     ),
   );
 }
-
-// ─── (mascot used in HomeScreen is now _ChildMascotP inside _TahananTab) ──────
 

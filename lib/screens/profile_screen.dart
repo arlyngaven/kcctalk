@@ -139,6 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
+        // ignore: unnecessary_underscores
         pageBuilder: (_, a, __) => FadeTransition(
             opacity: a, child: const ProfileSelectorScreen()),
       ),
@@ -163,6 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    // ignore: curly_braces_in_flow_control_structures
     if (!_loaded) return const Center(
         child:CircularProgressIndicator(color:KCCColors.blue));
 
@@ -264,6 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             borderRadius:BorderRadius.circular(8),
             child:AnimatedBuilder(
               animation:_ringAnim,
+              // ignore: unnecessary_underscores
               builder:(_,__) => LinearProgressIndicator(
                 value:usageRatio*_ringAnim.value,
                 minHeight:12,
@@ -460,6 +463,7 @@ class _RingCard extends StatelessWidget {
     child:Column(children:[
       AnimatedBuilder(
         animation:anim,
+        // ignore: unnecessary_underscores
         builder:(_,__) => KCCProgressRing(
           size:76,strokeWidth:8,
           progress:progress*anim.value,
@@ -520,9 +524,10 @@ class _MedMascotP extends CustomPainter {
       canvas.drawCircle(Offset(cx+dx,cy-11),2.8,Paint()..color=const Color(0xFF1A1A2E));
       canvas.drawCircle(Offset(cx+dx+(dx>0?1.5:-1.5),cy-13),1.2,Paint()..color=Colors.white);
     }
-    for(final dx in [-9.0,9.0])
+    for(final dx in [-9.0,9.0]) {
       canvas.drawCircle(Offset(cx+dx,cy-4),3.5,
           Paint()..color=const Color(0xFFFF9BAD).withAlpha((255*(0.45)).round()));
+    }
     canvas.drawPath(
       Path()..moveTo(cx-5,cy+1)..quadraticBezierTo(cx,cy+5,cx+5,cy+1),
       Paint()..color=const Color(0xFF1A1A2E)..style=PaintingStyle.stroke

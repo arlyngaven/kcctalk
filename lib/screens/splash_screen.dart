@@ -1,5 +1,7 @@
 // lib/screens/splash_screen.dart
 
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
@@ -117,6 +119,8 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
+        // ignore: unnecessary_underscores
+        // ignore: unnecessary_underscores
         pageBuilder: (_, animation, __) =>
             FadeTransition(opacity: animation, child: destination),
       ),
@@ -157,15 +161,23 @@ class _SplashScreenState extends State<SplashScreen>
             // ── Decorative background circles
             Positioned(top: -60, left: -60,
               child: _DecoCircle(size: 220,
+                  // ignore: duplicate_ignore
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.07))),
             Positioned(bottom: -80, right: -40,
               child: _DecoCircle(size: 260,
+                  // ignore: duplicate_ignore
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.06))),
             Positioned(top: 80, right: 30,
               child: _DecoCircle(size: 80,
+                  // ignore: duplicate_ignore
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.08))),
             Positioned(bottom: 180, left: 20,
               child: _DecoCircle(size: 50,
+                  // ignore: duplicate_ignore
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.1))),
 
             // ── Twinkling stars
@@ -253,6 +265,7 @@ class _SplashScreenState extends State<SplashScreen>
         top:  positions[i].dy,
         child: AnimatedBuilder(
           animation: _starsCtrl,
+          // ignore: unnecessary_underscores
           builder: (_, __) {
             final phase = (_starsCtrl.value + delays[i]) % 1.0;
             return Opacity(
@@ -291,9 +304,13 @@ class _AppTitle extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
+            // ignore: duplicate_ignore
+            // ignore: deprecated_member_use
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
+                // ignore: duplicate_ignore
+                // ignore: deprecated_member_use
                 color: Colors.white.withOpacity(0.3), width: 1),
           ),
           child: const Text(
@@ -390,7 +407,7 @@ class _LoadingDots extends StatelessWidget {
       children: List.generate(3, (i) {
         return AnimatedBuilder(
           animation: controller,
-          builder: (_, __) {
+          builder: (_, _) {
             final phase = (controller.value + i * 0.3) % 1.0;
             final scale = 0.6 + 0.4 * sin(phase * pi);
             return Transform.scale(
@@ -461,8 +478,11 @@ class _StarPainter extends CustomPainter {
       final outerY = cy + r * sin(outerAngle);
       final innerX = cx + (r * 0.4) * cos(innerAngle);
       final innerY = cy + (r * 0.4) * sin(innerAngle);
-      if (i == 0) path.moveTo(outerX, outerY);
-      else        path.lineTo(outerX, outerY);
+      if (i == 0) {
+        path.moveTo(outerX, outerY);
+      } else {
+        path.lineTo(outerX, outerY);
+      }
       path.lineTo(innerX, innerY);
     }
     path.close();

@@ -46,6 +46,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 450),
+      // ignore: unnecessary_underscores
       pageBuilder: (_, a, __) => FadeTransition(
         opacity: a,
         child: HomeScreen(profile: widget.profile),
@@ -132,6 +133,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 450),
+      // ignore: unnecessary_underscores
       pageBuilder: (_, a, __) =>
           FadeTransition(opacity: a, child: const OnboardingScreen()),
     ));
@@ -142,6 +144,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
     final name    = widget.profile.name.trim();
     final initial = name.isEmpty ? '?' : name[0].toUpperCase();
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
